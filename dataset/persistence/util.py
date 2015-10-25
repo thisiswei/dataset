@@ -7,6 +7,8 @@ except ImportError:  # pragma: no cover
     from ordereddict import OrderedDict
 
 from sqlalchemy import Integer, UnicodeText, Float, DateTime, Boolean
+from sqlalchemy.dialects.postgresql import JSON
+
 from six import string_types
 
 row_type = OrderedDict
@@ -21,6 +23,8 @@ def guess_type(sample):
         return Float
     elif isinstance(sample, datetime):
         return DateTime
+    elif isinstance(sample, dict):
+        return JSON
     return UnicodeText
 
 
