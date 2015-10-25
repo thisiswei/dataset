@@ -4,9 +4,10 @@ import re
 
 import six
 from six.moves.urllib.parse import urlencode, parse_qs
+from datetime import datetime
 
 from sqlalchemy import create_engine
-from sqlalchemy import Integer, String
+from sqlalchemy import Integer, String, DateTime, func
 from sqlalchemy.sql import text
 from sqlalchemy.schema import MetaData, Column
 from sqlalchemy.schema import Table as SQLATable
@@ -191,6 +192,10 @@ class Database(object):
 
             table = SQLATable(table_name, self.metadata, schema=self.schema)
             table.append_column(col)
+            # always add date_added and date_updated to tables
+            table.append_column(Column('created', DateTime, default=func.utcnow()))
+            table.append_column(Column('updated', DateTime, default=func.utcnow(), onupdate=func.utc_timestamp()))
+
             table.create(self.engine)
             self._tables[table_name] = table
             return Table(self, table)
