@@ -147,6 +147,32 @@ class Table(object):
         except KeyError:
             return 0
 
+    def save_json(self, json_, keys, keymaps=None):
+        """
+        Insert or update jsonb into postgresql, will use keys plus "data" as the column name.
+        ```
+        >>> db['json_table'].save_json([dict(contest_id=1, blah=dict(a=2, b=2))], ['wtf_id'],
+                                       keymaps={'contest_id': 'wtf'_id'})
+        dk=# select * from json_table;
+          id  wtf_id  data
+          1 | 1     | {"blah": {"a": 2, "b": 2}, "wtf_id": 1}
+        )
+        ```
+        """
+        to_insert = []
+        JSONB_KEY = 'data'
+        # construct new dict with keys in keymaps if keymaps passed otherwise use original keys
+        keymaps = dict((k, keymaps[k] if (keymaps and k in keymaps) else k) for k in json_[0].keys())
+        for j in json_:
+            # construct a new json to insert with new key names if we pass keymaps
+            jsonb = dict((new_key, j[old_key]) for old_key, new_key in keymaps.iteritems())
+            # column would be keys + JSONB_KEY
+            to_insert.append(dict(dict((k, jsonb[k]) for k in keys), **{JSONB_KEY: jsonb}))
+        # ensure we have correspondence columns and create missing ones.
+        self._ensure_columns(to_insert[0])
+        # TODO insert bulk: self.database.executable.execute('''insert into table_name ''')
+        self.upsert_many(to_insert, keys, ensure=True)
+
     def upsert_many(self, rows, keys, *args, **kwargs):
         for row in rows:
             self.upsert(row, keys, *args, **kwargs)
