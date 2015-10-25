@@ -147,6 +147,10 @@ class Table(object):
         except KeyError:
             return 0
 
+    def upsert_many(self, rows, keys, *args, **kwargs):
+        for row in rows:
+            self.upsert(row, keys, *args, **kwargs)
+
     def upsert(self, row, keys, ensure=True, types={}):
         """
         An UPSERT is a smart combination of insert and update. If rows with matching ``keys`` exist
