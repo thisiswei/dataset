@@ -147,7 +147,7 @@ class Table(object):
         except KeyError:
             return 0
 
-    def save_json(self, json_, keys, keymaps=None):
+    def save_json(self, json_, keys=None, keymaps=None):
         """
         Insert or update jsonb into postgresql, will use keys plus "data" as the column name.
         ```
