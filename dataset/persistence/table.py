@@ -171,7 +171,7 @@ class Table(object):
         # ensure we have correspondence columns and create missing ones.
         self._ensure_columns(to_insert[0])
         # TODO insert bulk: self.database.executable.execute('''insert into table_name ''')
-        self.upsert_many(to_insert, keys, ensure=True)
+        self.upsert_many(to_insert, keys)
 
     def upsert_many(self, rows, keys, *args, **kwargs):
         for row in rows:
