@@ -6,7 +6,7 @@ try:
 except ImportError:  # pragma: no cover
     from ordereddict import OrderedDict
 
-from sqlalchemy import Integer, UnicodeText, Float, DateTime, Boolean
+from sqlalchemy import Integer, UnicodeText, Float, DateTime, Boolean, BigInteger
 from sqlalchemy.dialects.postgresql import JSON
 
 from six import string_types
@@ -18,6 +18,8 @@ def guess_type(sample):
     if isinstance(sample, bool):
         return Boolean
     elif isinstance(sample, int):
+        if int > 1000000000:
+            return BigInteger
         return Integer
     elif isinstance(sample, float):
         return Float
