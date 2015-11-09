@@ -193,8 +193,8 @@ class Database(object):
             table = SQLATable(table_name, self.metadata, schema=self.schema)
             table.append_column(col)
             # always add date_added and date_updated to tables
-            table.append_column(Column('created', DateTime, default=func.utcnow()))
-            table.append_column(Column('updated', DateTime, default=func.utcnow(), onupdate=func.utc_timestamp()))
+            table.append_column(Column('created', DateTime, default=datetime.utcnow))
+            table.append_column(Column('updated', DateTime, default=datetime.utcnow, onupdate=datetime.utcnow))
 
             table.create(self.engine)
             self._tables[table_name] = table
